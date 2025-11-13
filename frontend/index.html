@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wetter Dashboard</title>
 
-  <!-- Nur eigenes CSS -->
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
 </head>
+
 <body data-theme="light">
 
   <div id="app-loader" class="loader-overlay">
@@ -17,21 +16,19 @@
   </div>
 
   <main class="app">
+
+    <!-- MAP -->
     <section class="card map-card">
-      <div id="map" class="map-canvas">
-      </div>
+      <div id="map" class="map-canvas"></div>
     </section>
 
-    <!-- Search + Toggle -->
+    <!-- WEATHER PANEL -->
     <section class="weather-panel">
       <div class="address-row">
-        <input
-          type="text"
-          id="address-input"
-          placeholder="Name oder ID eingeben …"
-          inputmode="text"
-        />
+        <input type="text" id="address-input" placeholder="Name oder ID eingeben …" inputmode="text" />
         <button id="address-go" type="button">Suchen</button>
+
+        <div id="autocomplete-list" class="autocomplete-list hidden"></div>
       </div>
 
       <div class="panel-meta">
@@ -39,6 +36,7 @@
           <span class="meta-label">Echtzeitdaten:</span>
           <div class="location">Klicke auf die Karte oder wähle eine Station</div>
         </div>
+
         <div class="meta-right">
           <label class="switch" title="Alle Stationen anzeigen">
             <input type="checkbox" id="stationCheckbox">
@@ -49,7 +47,7 @@
       </div>
     </section>
 
-    <!-- Wetter (Live) -->
+    <!-- LIVE WEATHER -->
     <section class="card">
       <h2>Wetter (Live-Daten)</h2>
       <div class="weather-grid">
@@ -76,9 +74,10 @@
       </div>
     </section>
 
-    <!-- Zeitraum + 5 nächste Stationen -->
+    <!-- RANGE + AGGREGATION -->
     <section class="card">
       <h2>Verfügbarer Zeitraum:</h2>
+
       <div id="available-dates-info" class="availability" style="display:none;">
         Verfügbar von <span id="min-date-display"></span> bis <span id="max-date-display"></span>
       </div>
@@ -90,6 +89,8 @@
         <label>Enddatum:
           <input type="date" id="chart-end-date">
         </label>
+
+        <!-- AGGREGATION (bleibt) -->
         <label>Aggregation:
           <select id="chart-aggregation">
             <option value="daily">Täglich</option>
@@ -103,46 +104,41 @@
       <ol id="nearest-list" class="nearest-list"></ol>
     </section>
 
-    <!-- Diagramme -->
+    <!-- CHARTS -->
     <section class="card">
       <h2>Diagramme</h2>
       <p id="chart-info">Wähle einen Diagrammtyp und setze ein Datum.</p>
+
       <div class="chart-selector">
         <button class="chart-btn" data-chart="temperature_trend">Temperatur</button>
         <button class="chart-btn" data-chart="precipitation_monthly">Niederschlag</button>
         <button class="chart-btn" data-chart="temperature_monthly">Temp. Monatlich</button>
         <button class="chart-btn" data-chart="humidity_trend">Luftfeuchtigkeit</button>
-        <button class="chart-btn" data-chart="weather_comparison">Vergleich</button>
       </div>
 
       <div class="chart-container" style="display:none;">
         <canvas id="weatherChart"></canvas>
       </div>
 
-      <button id="expand-chart-btn" class="chart-btn" style="display:none;">
-        Diagramm vergrößern
-      </button>
+      <button id="expand-chart-btn" class="chart-btn" style="display:none;">Diagramm vergrößern</button>
     </section>
 
-    <!-- Historische Tabelle -->
+    <!-- HISTORY TABLE -->
     <section class="card">
       <h2>Historische Tabelle</h2>
-      <p id="historical-info">Nutzt denselben Zeitraum wie oben.</p>
+      <p id="historical-info">Nutzt denselben Zeitraum + Aggregation wie oben.</p>
+
       <div class="form-group">
-        <label>Datentyp:
-          <select id="data-type">
-            <option value="daily">Täglich</option>
-            <option value="monthly">Monatlich</option>
-            <option value="yearly">Jährlich</option>
-          </select>
-        </label>
+        <!-- Datentyp unten wurde entfernt -->
         <button id="load-historical">Daten laden</button>
       </div>
+
       <div id="historical-table" class="result-container"></div>
     </section>
+
   </main>
 
-  <!-- Modal (nur Layout) -->
+  <!-- CHART MODAL -->
   <div id="chartModal" class="chart-modal" style="display:none;">
     <div class="chart-modal-content">
       <button class="chart-modal-close" aria-label="Schließen">×</button>
@@ -151,11 +147,15 @@
     </div>
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<script src="/scripts/app.js"></script>
-<script src="/scripts/map.js"></script>
+  <script src="/scripts/app.js"></script>
+  <script src="/scripts/map.js"></script>
+  <script src="/scripts/search.js"></script>
+  <script src="/scripts/charts.js"></script>
+  <script src="/scripts/history.js"></script>
 
 </body>
 </html>
