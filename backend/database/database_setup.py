@@ -10,13 +10,8 @@ from sqlalchemy import create_engine, text
 
 from app.config import Config
 
-
+# Datenbank setup und befüllung 
 class DatabaseSetup:
-    """
-    Kümmert sich nur um:
-    - Erstellen der Datenbank
-    - Anlegen der Tabellen
-    """
 
     def __init__(self, db_path: str = Config.DB_PATH):
         self.db_path = db_path

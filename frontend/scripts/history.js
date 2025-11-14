@@ -32,8 +32,7 @@ async function loadHistoricalTable() {
         `&end_date=${endDate}` +
         `&aggregation=${aggregation}`;
 
-    console.log("👉 Sende Request:", url);
-
+    
     try {
         const response = await fetch(url);
 
@@ -42,7 +41,6 @@ async function loadHistoricalTable() {
         }
 
         const data = await response.json();
-        console.log("📥 Response:", data);
 
         // Backend liefert rows (nicht data.data)
         const rows = data.rows;
@@ -55,7 +53,7 @@ async function loadHistoricalTable() {
 
         renderHistoricalTable(rows);
     } catch (err) {
-        console.error("❌ Fehler beim Laden der Tabelle:", err);
+        console.error("Fehler beim Laden der Tabelle:", err);
         document.getElementById("historical-table").innerHTML =
             "<p>Fehler beim Laden der Daten.</p>";
     }

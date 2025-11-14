@@ -1,4 +1,3 @@
-/* ====== GLOBAL ====== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -18,7 +17,6 @@ body {
   transition: opacity .4s ease;
 }
 
-/* ====== CARD ====== */
 .card {
   background: #fff;
   border-radius: 10px;
@@ -32,7 +30,6 @@ body {
   font-weight: 600;
 }
 
-/* ====== MAP ====== */
 .map-canvas, #map {
   width: 100%;
   height: 460px;
@@ -43,7 +40,6 @@ body {
   overflow: hidden;
 }
 
-/* ====== SEARCH ====== */
 .address-row {
   display: flex;
   gap: 10px;
@@ -80,7 +76,6 @@ body {
   background: #2c5fe0;
 }
 
-/* ====== AUTOCOMPLETE ====== */
 .autocomplete-list {
   position: absolute;
   top: 50px;
@@ -111,7 +106,6 @@ body {
   display: none;
 }
 
-/* ====== TOGGLE ====== */
 .switch {
   position: relative;
   display: inline-block;
@@ -147,7 +141,6 @@ input:checked + .slider:before {
   transform: translateX(24px);
 }
 
-/* ====== WEATHER ====== */
 .weather-panel {
   margin-top: -10px;
   margin-bottom: 18px;
@@ -187,7 +180,6 @@ input:checked + .slider:before {
   text-align: center;
 }
 
-/* ====== NEAREST ====== */
 .nearest-list {
   list-style: none;
   padding-left: 0;
@@ -206,7 +198,6 @@ input:checked + .slider:before {
   color: #666;
 }
 
-/* ====== FORMS ====== */
 .form-group {
   display: flex;
   flex-wrap: wrap;
@@ -225,7 +216,6 @@ select {
   font-size: 15px;
 }
 
-/* ====== CHARTS ====== */
 .chart-selector {
   display: flex;
   flex-wrap: wrap;
@@ -253,7 +243,6 @@ select {
   max-height: 360px;
 }
 
-/* ====== MODAL ====== */
 .chart-modal {
   position: fixed;
   inset: 0;
@@ -282,7 +271,6 @@ select {
   height: 70vh;
 }
 
-/* ====== TABLE ====== */
 .result-container table {
   width: 100%;
   border-collapse: collapse;
@@ -317,7 +305,6 @@ select {
   font-weight: 600;
 }
 
-/* ====== LOADER ====== */
 .loader-overlay {
   position: fixed;
   inset: 0;
@@ -344,7 +331,6 @@ select {
   to { transform: rotate(360deg); }
 }
 
-/* ====== RESPONSIVE ====== */
 @media (max-width: 700px) {
   .map-canvas, #map { height: 300px; }
   .form-group { flex-direction: column; align-items: flex-start; }

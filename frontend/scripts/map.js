@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
       endInput.value = isoBis;
   }
 
-  // 🔥 B: Diagramme automatisch aktualisieren
+  //B: Diagramme automatisch aktualisieren
   function triggerChartUpdate() {
     document.dispatchEvent(new CustomEvent("stationChanged"));
   }

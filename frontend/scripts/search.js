@@ -1,4 +1,3 @@
-// frontend/scripts/search.js
 
 const input = document.getElementById("address-input");
 const btn = document.getElementById("address-go");
@@ -68,7 +67,6 @@ function selectResult(index) {
 
     const stationId = st.STATIONS_ID;
 
-    // ⭐ WICHTIG: Karte fokussieren + Wetter laden (egal ob Marker sichtbar)
     if (typeof window.focusStation === "function") {
         window.focusStation(stationId);
     } else {

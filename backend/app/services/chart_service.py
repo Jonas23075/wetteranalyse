@@ -9,14 +9,15 @@ class ChartService:
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
 
-    # ---------------------------------------
-    # Cleaning + rounding
-    # ---------------------------------------
+    
     def _clean_value(self, v):
         if v in (-999, -999.0, "-999", None):
             return "--"
         try:
-            return round(float(v))
+            v_float = float(v)
+            if v_float < -50:
+                return "--"
+            return round(v_float)
         except:
             return v
 
@@ -30,9 +31,6 @@ class ChartService:
             r["value"] = self._clean_value(r.get("value"))
         return rows
 
-    # ============================================================================
-    # HELPER: GENERATE COMPLETE DATE / PERIOD LISTS (IMPORTANT!)
-    # ============================================================================
 
     def _generate_daily_range(self, start, end):
         out = []
@@ -57,10 +55,6 @@ class ChartService:
             out.append(str(cur.year))
             cur += relativedelta(years=1)
         return out
-
-    # ============================================================================
-    # CHART TYPES
-    # ============================================================================
 
     # DAILY TEMPERATURE TREND
     def temperature_trend(self, station_id, start, end):
