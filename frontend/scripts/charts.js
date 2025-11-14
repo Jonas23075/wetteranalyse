@@ -53,20 +53,155 @@ function renderChart(data) {
 
     if (weatherChart) weatherChart.destroy();
 
+    // Create gradient for the line
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(67, 119, 255, 0.8)');
+    gradient.addColorStop(1, 'rgba(67, 119, 255, 0.1)');
+
+    // Determine chart type and appropriate formatting
+    const chartType = document.querySelector('.chart-btn.active')?.dataset.chart || 'temperature_trend';
+    let yAxisLabel = 'Wert';
+    let title = 'Wetterdaten';
+
+    if (chartType.includes('temperature')) {
+        yAxisLabel = 'Temperatur (°C)';
+        title = 'Temperaturverlauf';
+    } else if (chartType.includes('precipitation')) {
+        yAxisLabel = 'Niederschlag (mm)';
+        title = 'Niederschlagsverlauf';
+    } else if (chartType.includes('humidity')) {
+        yAxisLabel = 'Luftfeuchtigkeit (%)';
+        title = 'Luftfeuchtigkeitsverlauf';
+    }
+
     weatherChart = new Chart(ctx, {
         type: "line",
         data: {
             labels: data.labels,
             datasets: [{
-                label: "Wert",
+                label: yAxisLabel,
                 data: data.values,
-                borderColor: "rgba(0, 102, 204, 0.8)",
-                borderWidth: 2,
-                fill: false,
-                tension: 0.25
+                borderColor: '#4377ff',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#4377ff',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#2c5fe0',
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 3
             }]
         },
-        options: { responsive: true }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: title,
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 20
+                    }
+                },
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: '#4377ff',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: false,
+                    callbacks: {
+                        title: function(context) {
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            let value = context.parsed.y;
+                            if (chartType.includes('temperature')) {
+                                return value.toFixed(1) + ' °C';
+                            } else if (chartType.includes('precipitation')) {
+                                return value.toFixed(1) + ' mm';
+                            } else if (chartType.includes('humidity')) {
+                                return value.toFixed(0) + ' %';
+                            }
+                            return value.toString();
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Datum',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        lineWidth: 1
+                    },
+                    ticks: {
+                        maxTicksLimit: 10
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: yAxisLabel,
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        lineWidth: 1
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            if (chartType.includes('temperature')) {
+                                return value.toFixed(1) + '°';
+                            } else if (chartType.includes('precipitation')) {
+                                return value.toFixed(1);
+                            } else if (chartType.includes('humidity')) {
+                                return value + '%';
+                            }
+                            return value;
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeInOutQuart'
+            },
+            elements: {
+                point: {
+                    hoverRadius: 8
+                }
+            }
+        }
     });
 }
 

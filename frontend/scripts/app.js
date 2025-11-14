@@ -23,7 +23,6 @@ async function loadStations() {
 
     console.log("Stationen geladen:", window.stationCache.length);
 
-    // 🔥 HIER: Event feuern, damit map.js loslegen kann
     window.dispatchEvent(new Event("stationsLoaded"));
 
   } catch (err) {
