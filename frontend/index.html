@@ -1,161 +1,159 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wetter Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wetteranalyse Dashboard</title>
 
-  <link rel="stylesheet" href="/static/style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="/static/style.css?v=1" />
 </head>
+<body>
 
-<body data-theme="light">
+<div class="layout">
 
-  <div id="app-loader" class="loader-overlay">
-    <div class="loader-spinner" role="status" aria-label="Wird geladen"></div>
-  </div>
+    <!-- Sidebar -->
+    <aside class="sidebar">
 
-  <main class="app">
-
-    <!-- MAP -->
-    <section class="card map-card">
-      <div id="map" class="map-canvas"></div>
-    </section>
-
-    <!-- WEATHER PANEL -->
-    <section class="weather-panel">
-      <div class="address-row">
-        <input type="text" id="address-input" placeholder="Name oder ID eingeben …" inputmode="text" />
-        <button id="address-go" type="button">Suchen</button>
-
-        <div id="autocomplete-list" class="autocomplete-list hidden"></div>
-      </div>
-
-      <div class="panel-meta">
-        <div class="meta-left">
-          <span class="meta-label">Echtzeitdaten:</span>
-          <div class="location">Klicke auf die Karte oder wähle eine Station</div>
-        </div>
-
-        <div class="meta-right">
-          <label class="switch" title="Alle Stationen anzeigen">
-            <input type="checkbox" id="stationCheckbox">
-            <span class="slider"></span>
-          </label>
-          <span class="switch-label">Stationen anzeigen</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- LIVE WEATHER -->
-    <section class="card">
-      <h2>Wetter (Live-Daten)</h2>
-      <div class="weather-grid">
+        <!-- Search -->
         <div class="card">
-          <h3>Temperatur</h3>
-          <p class="value" id="temp">-- °C</p>
+            <h2 class="card-title">Station suchen</h2>
+
+            <div class="search-group">
+                <input id="address-input" type="text" placeholder="Name oder ID..." class="input" />
+                <button id="address-go" class="btn">Suchen</button>
+            </div>
+
+            <div id="autocomplete-list" class="autocomplete hidden"></div>
         </div>
+
+        <!-- Live Wetter -->
         <div class="card">
-          <h3>Windgeschwindigkeit</h3>
-          <p class="value" id="wind">-- km/h</p>
+            <h2 class="card-title">Live Wetter</h2>
+
+            <p id="station-name" class="live-title">Keine Station</p>
+
+            <div class="live-row"><span>Temperatur:</span><strong id="temp">-- °C</strong></div>
+            <div class="live-row"><span>Wind:</span><strong id="wind">-- km/h</strong></div>
+            <div class="live-row"><span>Feuchtigkeit:</span><strong id="humidity">-- %</strong></div>
+
+            <p id="date" class="timestamp">--</p>
         </div>
+
+        <!-- Nearby Stations -->
         <div class="card">
-          <h3>Luftfeuchtigkeit</h3>
-          <p class="value" id="humidity">-- %</p>
+            <h2 class="card-title">Nächste Stationen</h2>
+            <ul id="nearest-list" class="nearest-list"></ul>
         </div>
+
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+        <!-- Map -->
+        <div class="card map-card">
+            <div class="map-header">
+                <h2 class="card-title">Karte</h2>
+
+                <label class="toggle">
+                    <input type="checkbox" id="stationCheckbox" />
+                    <span>Stationen anzeigen</span>
+                </label>
+            </div>
+
+            <div id="map" class="map"></div>
+        </div>
+
+        <!-- Chart Controls -->
         <div class="card">
-          <h3>Datum</h3>
-          <p class="value" id="date">--</p>
+            <h2 class="card-title">Analysebereich</h2>
+
+            <div id="available-dates-info" class="dates-row">
+                Verfügbarer Zeitraum:
+                <strong id="min-date-display">--</strong>
+                bis
+                <strong id="max-date-display">--</strong>
+            </div>
+
+            <div class="controls-grid">
+
+                <div>
+                    <label>Startdatum</label>
+                    <input type="date" id="chart-start-date" class="input" />
+                </div>
+
+                <div>
+                    <label>Enddatum</label>
+                    <input type="date" id="chart-end-date" class="input" />
+                </div>
+
+                <div>
+                    <label>Metrik</label>
+                    <select id="chart-metric" class="input">
+                        <option value="TMK">Durchschnittstemperatur</option>
+                        <option value="TXK">Max Temperatur</option>
+                        <option value="TNK">Min Temperatur</option>
+                        <option value="RSK">Niederschlagssumme</option>
+                        <option value="UPM">Luftfeuchtigkeit</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Aggregation</label>
+                    <select id="chart-aggregation" class="input">
+                        <option value="daily">Täglich</option>
+                        <option value="monthly">Monatlich</option>
+                        <option value="yearly">Jährlich</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="flex-end">
+                <button id="run-analysis" class="btn-primary">Analyse starten</button>
+            </div>
         </div>
-        <div class="card full-width">
-          <h3>Adresse</h3>
-          <p class="value" id="station-name">--</p>
+
+        <!-- Chart -->
+        <div class="card">
+            <h2 class="card-title">Diagramm</h2>
+            <div id="chart" class="chart"></div>
         </div>
-      </div>
-    </section>
 
-    <!-- RANGE + AGGREGATION -->
-    <section class="card">
-      <h2>Verfügbarer Zeitraum:</h2>
+        <!-- Table -->
+        <div class="card">
+            <h2 class="card-title">Historische Daten</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Zeitraum</th>
+                        <th>Durchschnitt</th>
+                        <th>Max</th>
+                        <th>Min</th>
+                        <th>Niederschlag</th>
+                        <th>Feuchte</th>
+                    </tr>
+                </thead>
+                <tbody id="historical-table"></tbody>
+            </table>
+        </div>
 
-      <div id="available-dates-info" class="availability" style="display:none;">
-        Verfügbar von <span id="min-date-display"></span> bis <span id="max-date-display"></span>
-      </div>
+    </main>
 
-      <div class="form-group">
-        <label>Startdatum:
-          <input type="date" id="chart-start-date">
-        </label>
-        <label>Enddatum:
-          <input type="date" id="chart-end-date">
-        </label>
+</div>
 
-        <!-- AGGREGATION (bleibt) -->
-        <label>Aggregation:
-          <select id="chart-aggregation">
-            <option value="daily">Täglich</option>
-            <option value="monthly">Monatlich</option>
-            <option value="yearly">Jährlich</option>
-          </select>
-        </label>
-      </div>
-
-      <h2>Nächste Stationen</h2>
-      <ol id="nearest-list" class="nearest-list"></ol>
-    </section>
-
-    <!-- CHARTS -->
-    <section class="card">
-      <h2>Diagramme</h2>
-      <p id="chart-info">Wähle einen Diagrammtyp und setze ein Datum.</p>
-
-      <div class="chart-selector">
-        <button class="chart-btn" data-chart="temperature_trend">Temperatur</button>
-        <button class="chart-btn" data-chart="precipitation_monthly">Niederschlag</button>
-        <button class="chart-btn" data-chart="temperature_monthly">Temp. Monatlich</button>
-        <button class="chart-btn" data-chart="humidity_trend">Luftfeuchtigkeit</button>
-      </div>
-
-      <div class="chart-container" style="display:none;">
-        <canvas id="weatherChart"></canvas>
-      </div>
-
-      <button id="expand-chart-btn" class="chart-btn" style="display:none;">Diagramm vergrößern</button>
-    </section>
-
-    <!-- HISTORY TABLE -->
-    <section class="card">
-      <h2>Historische Tabelle</h2>
-      <p id="historical-info">Nutzt denselben Zeitraum + Aggregation wie oben.</p>
-
-      <div class="form-group">
-        <!-- Datentyp unten wurde entfernt -->
-        <button id="load-historical">Daten laden</button>
-      </div>
-
-      <div id="historical-table" class="result-container"></div>
-    </section>
-
-  </main>
-
-  <!-- CHART MODAL -->
-  <div id="chartModal" class="chart-modal" style="display:none;">
-    <div class="chart-modal-content">
-      <button class="chart-modal-close" aria-label="Schließen">×</button>
-      <h3 id="modal-chart-title">Diagramm</h3>
-      <canvas id="modalWeatherChart"></canvas>
-    </div>
-  </div>
-
-  <!-- SCRIPTS -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-  <script src="/scripts/app.js"></script>
-  <script src="/scripts/map.js"></script>
-  <script src="/scripts/search.js"></script>
-  <script src="/scripts/charts.js"></script>
-  <script src="/scripts/history.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/scripts/app.js"></script>
+<script src="/scripts/map.js"></script>
+<script src="/scripts/search.js"></script>
+<script src="/scripts/analyse.js"></script>
 
 </body>
 </html>

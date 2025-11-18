@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -27,14 +27,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-frontend_path = os.path.join(os.path.dirname(__file__), "../../frontend")
-app.mount("/static", StaticFiles(directory=os.path.join(frontend_path, "static")), name="static")
-app.mount("/scripts", StaticFiles(directory=os.path.join(frontend_path, "scripts")), name="scripts")
+# -------------------------------------------
+# ★ FRONTEND PFAD KORREKT LADEN
+# -------------------------------------------
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))        # backend/app
+BACKEND_DIR = os.path.dirname(BASE_DIR)                      # backend
+ROOT_DIR = os.path.dirname(BACKEND_DIR)                      # wetteranalyse
+frontend_path = os.path.join(ROOT_DIR, "frontend")     
+
+app.mount("/static",
+          StaticFiles(directory=os.path.join(frontend_path, "static")),
+          name="static")
+
+app.mount("/scripts",
+          StaticFiles(directory=os.path.join(frontend_path, "scripts")),
+          name="scripts")
 
 @app.get("/")
 def serve_index():
     return FileResponse(os.path.join(frontend_path, "index.html"))
+
+# -------------------------------------------
+# ★ API ROUTES
+# -------------------------------------------
 
 @app.get("/api/live_weather")
 def get_live_weather(lat: float, lon: float):
@@ -47,15 +63,19 @@ def get_station_data():
 @app.get("/api/nearest_stations")
 def api_nearest(lat: float, lon: float):
     return db_service.get_nearest_stations(lat, lon)
-7
+
 @app.get("/api/historical_data")
-def api_historical(station_id: int, start_date: datetime, end_date: datetime, aggregation: str = "daily"):
+def api_historical(station_id: int, start_date: datetime, end_date: datetime, aggregation: str = "yearly"):
     s = start_date.strftime("%Y-%m-%d")
     e = end_date.strftime("%Y-%m-%d")
     return history_service.get_history(aggregation, station_id, s, e)
 
 @app.get("/api/chart_data")
-def api_chart(station_id: int, type: str, start_date: datetime, end_date: datetime):
-    s = start_date.strftime("%Y-%m-%d")
-    e = end_date.strftime("%Y-%m-%d")
-    return chart_service.get_chart(type, station_id, s, e)
+def api_chart(station_id: int, metric: str, aggregation: str, start_date: str, end_date: str):
+    return chart_service.get_chart_data(
+        station_id=station_id,
+        start_date=start_date,
+        end_date=end_date,
+        metric=metric,
+        aggregation=aggregation
+    )

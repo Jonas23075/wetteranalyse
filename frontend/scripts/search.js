@@ -7,9 +7,6 @@ let searchDebounce = null;
 let selectedIndex = -1;
 let currentResults = [];
 
-// ==========================
-//       SUCHEN
-// ==========================
 function runSearch(query) {
     if (!Array.isArray(window.stationCache) || window.stationCache.length === 0) {
         autoBox.innerHTML = "<div class='autocomplete-item'>Lade Stationen...</div>";
@@ -27,10 +24,6 @@ function runSearch(query) {
     selectedIndex = -1;
     renderDropdown(matches);
 }
-
-// ==========================
-//    DROPDOWN RENDERN
-// ==========================
 function renderDropdown(results) {
     if (!results.length) {
         autoBox.innerHTML = `<div class="autocomplete-item">Keine Treffer</div>`;
